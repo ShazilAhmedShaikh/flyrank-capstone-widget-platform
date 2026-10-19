@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Environment and Secrets (CRITICAL: never commit secrets)
+.env
+*.local
+*.secret
+
+# SQLite Databases & Local Data
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+junit.xml
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
