@@ -83,10 +83,12 @@ class SubmissionService:
                     detail=f"Missing required field: '{fname}'"
                 )
 
-            # Basic email format check if type is email
+            # Robust RFC-compliant email validation if field type is email
             if f.get("type") == "email" and val:
+                import re
                 val_str = str(val).strip()
-                if "@" not in val_str or "." not in val_str.split("@")[-1]:
+                email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$"
+                if not re.match(email_regex, val_str) or val_str.endswith("."):
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
                         detail=f"Invalid email address provided for field: '{fname}'"
