@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Website — Second Origin Demo (Port 5500)</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 24px 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        code {
+            background: #f1f5f9;
+            color: #d946ef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .code-box {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 16px 0;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        button.btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn:hover {
+            background: #1d4ed8;
+        }
+        button.btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        button.btn-secondary:hover {
+            background: #cbd5e1;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .pill-success { background: #dcfce7; color: #166534; }
+        .pill-danger { background: #fee2e2; color: #991b1b; }
+        .pill-info { background: #e0f2fe; color: #075985; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div>
+                <h2 style="margin:0; font-size: 20px;">Customer Blog & E-Commerce Site</h2>
+                <small style="opacity: 0.8;">Hosted on Origin: <code>http://localhost:5500</code></small>
+            </div>
+            <span class="badge">Second-Origin Active</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>Testing Cross-Origin Embeddable Widget</h1>
+            <p>
+                This webpage simulates a customer website running on a completely distinct origin (e.g. <code>http://localhost:5500</code> or <code>file://</code>).
+                The backend API runs on <code>http://localhost:8000</code>.
+            </p>
+            <p>
+                The lead capture widget below was installed with exactly <strong>one single line of HTML</strong>:
+            </p>
+            <div class="code-box">
+&lt;script src="http://localhost:8000/widget.js?id=widget-demo-newsletter" async&gt;&lt;/script&gt;
+            </div>
+
+            <p>
+                When you submit the form in the bottom right corner, your browser sends a cross-origin <code>POST</code> request with CORS headers, triggers abuse rate limits, undergoes honeypot checks, performs IP geolocation enrichment via fallback chain, and records the lead safely in the backend.
+            </p>
+
+            <div class="actions">
+                <button class="btn" onclick="testProbe1Direct()">Run Probe 1: Send Test Lead</button>
+                <button class="btn btn-secondary" onclick="testProbe6Bot()">Run Probe 6: Simulate Bot Spam (Honeypot)</button>
+            </div>
+
+            <div id="probe-output" style="display:none; margin-top: 16px; padding: 12px; border-radius: 6px; font-size: 13px;"></div>
+        </div>
+
+        <div class="card">
+            <h3>Backend Connectivity Status</h3>
+            <p id="api-status">Checking backend connection at <code>http://localhost:8000/health</code>...</p>
+        </div>
+    </main>
+
+    <!-- Configure Widget API Endpoint -->
+    <script>
+        window.FLYRANK_WIDGET_BASE_URL = 'http://localhost:8000';
+
+        // Check backend health on load
+        fetch('http://localhost:8000/health', { mode: 'cors' })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('api-status').innerHTML = 
+                    '<span class="status-pill pill-success">ONLINE</span> Connected to ' + data.app + ' (' + data.environment + ')';
+            })
+            .catch(err => {
+                document.getElementById('api-status').innerHTML = 
+                    '<span class="status-pill pill-danger">OFFLINE</span> Could not reach backend at http://localhost:8000. Start it with <code>python -m app.main</code>.';
+            });
+
+        function showResult(ok, message) {
+            const out = document.getElementById('probe-output');
+            out.style.display = 'block';
+            out.style.background = ok ? '#dcfce7' : '#fee2e2';
+            out.style.color = ok ? '#166534' : '#991b1b';
+            out.innerHTML = message;
+        }
+
+        function testProbe1Direct() {
+            showResult(true, 'Dispatching valid submission from origin http://localhost:5500...');
+            fetch('http://localhost:8000/submissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors',
+                body: JSON.stringify({
+                    widget_id: 'widget-demo-newsletter',
+                    data: {
+                        email: 'probe1.tester@external-origin.com',
+                        name: 'Origin FiveFiveHundred Visitor'
+                    },
+                    website_hp: ''
+                })
+            })
+            .then(res => res.json().then(body => ({ status: res.status, body })))
+            .then(res => {
+                if (res.status === 201) {
+                    showResult(true, '<strong>Probe 1 PASSED!</strong> HTTP 201 Created. Submission ID: <code>' + res.body.submission_id + '</code>. Stored and visible in owner dashboard.');
+                } else {
+                    showResult(false, 'Status ' + res.status + ': ' + JSON.stringify(res.body));
+                }
+            })
+            .catch(err => showResult(false, 'Error: ' + err.message));
+        }
+
+        function testProbe6Bot() {
+            showResult(false, 'Dispatching simulated bot submission with filled honeypot...');
+            fetch('http://localhost:8000/submissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                mode: 'cors',
+                body: JSON.stringify({
+                    widget_id: 'widget-demo-newsletter',
+                    data: {
+                        email: 'spambot@malicious-domain.com',
+                        name: 'ScraperBot 9000'
+                    },
+                    website_hp: 'I am a malicious bot filling hidden fields'
+                })
+            })
+            .then(res => res.json().then(body => ({ status: res.status, body })))
+            .then(res => {
+                if (res.status === 400) {
+                    showResult(true, '<strong>Probe 6 PASSED!</strong> HTTP 400 Bad Request: ' + JSON.stringify(res.body) + '. Bot submission was successfully trapped and blocked by honeypot.');
+                } else {
+                    showResult(false, 'Unexpected status ' + res.status + ': ' + JSON.stringify(res.body));
+                }
+            })
+            .catch(err => showResult(false, 'Error: ' + err.message));
+        }
+    </script>
+
+    <!-- THE SINGLE EMBED SCRIPT LINE (Phase 2 & 3 Contract) -->
+    <script src="http://localhost:8000/widget.js?id=widget-demo-newsletter" async></script>
+
+</body>
+</html>
