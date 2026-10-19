@@ -96,6 +96,7 @@ app.include_router(dashboard.router)
 
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+CUSTOMER_SITE_DIR = Path(__file__).resolve().parent.parent / "customer_site"
 
 
 @app.get("/", tags=["Frontend"])
@@ -104,6 +105,14 @@ async def serve_dashboard():
     """Serve the interactive SaaS owner dashboard frontend."""
     dashboard_path = STATIC_DIR / "dashboard.html"
     return FileResponse(dashboard_path)
+
+
+@app.get("/demo", tags=["Demo"])
+@app.get("/customer-site", tags=["Demo"])
+async def serve_customer_demo():
+    """Serve the customer demo website directly on port 8000."""
+    customer_path = CUSTOMER_SITE_DIR / "index.html"
+    return FileResponse(customer_path)
 
 
 @app.get("/health", tags=["Health"])
