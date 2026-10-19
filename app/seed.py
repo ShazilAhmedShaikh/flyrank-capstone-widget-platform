@@ -117,28 +117,28 @@ async def seed():
                 created_at=now - timedelta(hours=2)
             ),
             Submission(
-                widget_newsletter.id,
-                tenant_a.id,
-                json.dumps({"email": "johann@berlin-data.de", "name": "Johann Schmidt"}),
-                hash_ip("203.0.113.45"),
-                "Germany",
-                "Berlin",
-                "provider_a",
-                None,
-                "accepted",
-                now - timedelta(hours=14)
+                widget_id=widget_newsletter.id,
+                tenant_id=tenant_a.id,
+                payload_json=json.dumps({"email": "johann@berlin-data.de", "name": "Johann Schmidt"}),
+                ip_hash=hash_ip("203.0.113.45"),
+                geo_country="Germany",
+                geo_city="Berlin",
+                geo_provider="provider_a",
+                idempotency_key=None,
+                status="accepted",
+                created_at=now - timedelta(hours=14)
             ),
             Submission(
-                widget_contact.id,
-                tenant_a.id,
-                json.dumps({"email": "sarah@londonventures.co.uk", "company": "London Ventures", "message": "Evaluating 500 seat migration."}),
-                hash_ip("198.51.100.88"),
-                "United Kingdom",
-                "London",
-                "provider_b",
-                None,
-                "accepted",
-                now - timedelta(days=2)
+                widget_id=widget_contact.id,
+                tenant_id=tenant_a.id,
+                payload_json=json.dumps({"email": "sarah@londonventures.co.uk", "company": "London Ventures", "message": "Evaluating 500 seat migration."}),
+                ip_hash=hash_ip("198.51.100.88"),
+                geo_country="United Kingdom",
+                geo_city="London",
+                geo_provider="provider_b",
+                idempotency_key=None,
+                status="accepted",
+                created_at=now - timedelta(days=2)
             )
         ]
         db.add_all(sample_submissions)
