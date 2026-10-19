@@ -59,3 +59,16 @@ async def test_widget_loader_and_versioned_bundle_caching(client: AsyncClient):
     assert "application/javascript" in bundle_resp.headers.get("Content-Type", "")
     assert bundle_resp.headers.get("Cache-Control") == "public, max-age=31536000, immutable"
     assert "FlyRankWidget" in bundle_resp.text
+
+
+@pytest.mark.asyncio
+async def test_frontend_dashboard_served(client: AsyncClient):
+    """Verify that the SaaS owner dashboard frontend is served at root and /dashboard."""
+    resp = await client.get("/")
+    assert resp.status_code == 200
+    assert "FlyRank LeadHub" in resp.text
+    assert "text/html" in resp.headers.get("Content-Type", "")
+
+    resp_dash = await client.get("/dashboard")
+    assert resp_dash.status_code == 200
+    assert "FlyRank LeadHub" in resp_dash.text

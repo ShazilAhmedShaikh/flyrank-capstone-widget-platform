@@ -5,8 +5,9 @@ lifespan startup events, and route registrations.
 """
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -92,6 +93,17 @@ app.include_router(submissions.router)
 app.include_router(auth.router)
 app.include_router(widgets.router)
 app.include_router(dashboard.router)
+
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+
+@app.get("/", tags=["Frontend"])
+@app.get("/dashboard", tags=["Frontend"])
+async def serve_dashboard():
+    """Serve the interactive SaaS owner dashboard frontend."""
+    dashboard_path = STATIC_DIR / "dashboard.html"
+    return FileResponse(dashboard_path)
 
 
 @app.get("/health", tags=["Health"])

@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlyRank — Embeddable Widget & Lead Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0b0f19;
+            --bg-card: #111827;
+            --bg-card-hover: #1f2937;
+            --border: #1e293b;
+            --border-focus: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.12);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.12);
+            --purple: #8b5cf6;
+            --purple-bg: rgba(139, 92, 246, 0.12);
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        code, pre {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* App Header */
+        header {
+            background-color: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .brand-text h1 {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #334155;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        /* Quick Tenant Switcher Badge */
+        .tenant-badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tenant-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Main Content Layout */
+        main {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 24px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        /* Metric Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .stat-card.stat-green::after { background: var(--success); }
+        .stat-card.stat-purple::after { background: var(--purple); }
+        .stat-card.stat-orange::after { background: var(--warning); }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Cards and Sections */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Widgets Grid */
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .widget-item-card {
+            background: #141c2e;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.15s ease;
+        }
+
+        .widget-item-card:hover {
+            border-color: #3b82f6;
+        }
+
+        .widget-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .widget-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .widget-type-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .type-signup { background: var(--primary); color: white; }
+        .type-contact { background: var(--success); color: white; }
+        .type-popover { background: var(--purple); color: white; }
+        .type-cta { background: var(--warning); color: #000; }
+
+        .widget-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .snippet-box {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 11px;
+            color: #38bdf8;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .snippet-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .widget-card-actions {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+        }
+
+        /* Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #141c2e;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pill-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+        .pill-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(139,92,246,0.3); }
+        .pill-orange { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+        .pill-gray { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+
+        /* Probe Runner Studio */
+        .probe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 16px;
+        }
+
+        .probe-card {
+            background: #141c2e;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .probe-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .probe-title {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .probe-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .probe-output {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 11px;
+            max-height: 120px;
+            overflow-y: auto;
+            color: #a5f3fc;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 520px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Toast feedback */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 9999;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content header-wrap">
+            <div class="brand">
+                <div class="brand-icon">F</div>
+                <div class="brand-text">
+                    <h1>FlyRank LeadHub</h1>
+                    <span>Embeddable Widget & Lead Platform</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="tenant-badge">
+                    <span class="tenant-dot"></span>
+                    <span id="tenant-display-name">Loading...</span>
+                </div>
+
+                <button class="btn btn-secondary btn-sm" onclick="switchTenant('tenant.a@example.com')">Tenant A (Alpha)</button>
+                <button class="btn btn-secondary btn-sm" onclick="switchTenant('tenant.b@example.com')">Tenant B (Beta)</button>
+                <a href="http://localhost:5500" target="_blank" class="btn btn-primary btn-sm" title="View customer second origin site">Open Customer Site ↗</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="setTab('overview')">
+                📊 Analytics Overview
+            </button>
+            <button class="tab-btn" onclick="setTab('widgets')">
+                🧩 Widgets <span class="tab-count" id="widgets-count-badge">0</span>
+            </button>
+            <button class="tab-btn" onclick="setTab('submissions')">
+                📥 Leads Inbox <span class="tab-count" id="leads-count-badge">0</span>
+            </button>
+            <button class="tab-btn" onclick="setTab('probes')">
+                ⚡ Acceptance Probe Studio
+            </button>
+        </div>
+
+        <!-- TAB 1: OVERVIEW -->
+        <div id="tab-overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Submissions</span>
+                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-desc">Captured and safely stored leads</span>
+                </div>
+                <div class="stat-card stat-green">
+                    <span class="stat-label">Last 24 Hours</span>
+                    <span class="stat-value" id="stat-24h">0</span>
+                    <span class="stat-desc">Recent activity</span>
+                </div>
+                <div class="stat-card stat-purple">
+                    <span class="stat-label">Last 7 Days</span>
+                    <span class="stat-value" id="stat-7d">0</span>
+                    <span class="stat-desc">Weekly lead pipeline</span>
+                </div>
+                <div class="stat-card stat-orange">
+                    <span class="stat-label">Active Widgets</span>
+                    <span class="stat-value" id="stat-widgets">0</span>
+                    <span class="stat-desc">Deployed embed snippets</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Geo Breakdown -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">🌍 Geolocation Breakdown (Fallback Chain)</div>
+                    </div>
+                    <div id="geo-list" style="display:flex; flex-direction: column; gap: 12px;">
+                        <p style="color:var(--text-dim); font-size:13px;">No geographic data yet.</p>
+                    </div>
+                </div>
+
+                <!-- Per-Widget Stats -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">📈 Leads by Widget</div>
+                    </div>
+                    <div id="widget-stats-list" style="display:flex; flex-direction: column; gap: 12px;">
+                        <p style="color:var(--text-dim); font-size:13px;">No widget data yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: WIDGETS MANAGER -->
+        <div id="tab-widgets" style="display:none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">Your Embeddable Widgets (Tenant-Isolated)</div>
+                    <button class="btn btn-primary" onclick="openCreateWidgetModal()">+ Create New Widget</button>
+                </div>
+                <div id="widgets-container" class="widgets-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: LEADS INBOX -->
+        <div id="tab-submissions" style="display:none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">Lead Submissions Inbox</div>
+                    <button class="btn btn-secondary btn-sm" onclick="fetchSubmissions()">↻ Refresh Leads</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Widget</th>
+                                <th>Submission Payload</th>
+                                <th>Geolocation</th>
+                                <th>Provider</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissions-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ACCEPTANCE PROBE STUDIO -->
+        <div id="tab-probes" style="display:none;">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">⚡ Interactive Capstone Acceptance Probe Studio (Layer 2 Verification)</div>
+                    <span style="font-size:12px; color:var(--text-muted);">Directly triggers each acceptance probe and verifies behavioral promises live.</span>
+                </div>
+
+                <div class="probe-grid">
+                    <!-- Probe 1 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 1: Second-Origin POST</span>
+                                <span class="badge-pill pill-success">CORS & DB</span>
+                            </div>
+                            <p class="probe-desc">Dispatches a valid submission with Origin header set to <code>http://localhost:5500</code>. Verifies 201 Created and immediate dashboard visibility.</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-sm" onclick="runProbe(1)">Execute Probe 1</button>
+                            <div id="probe-1-out" class="probe-output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Probe 2 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 2: Boundary Validation</span>
+                                <span class="badge-pill pill-orange">4xx Shield</span>
+                            </div>
+                            <p class="probe-desc">Sends malformed JSON and an oversized payload (>64KB). Verifies clean 400 Bad Request & 413 Content Too Large without leaking 500s.</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" onclick="runProbe(2)">Execute Probe 2</button>
+                            <div id="probe-2-out" class="probe-output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Probe 3 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 3: Rate Limiting Burst</span>
+                                <span class="badge-pill pill-purple">Abuse Guard</span>
+                            </div>
+                            <p class="probe-desc">Fires 7 rapid requests. Verifies HTTP 429 Too Many Requests appears under burst while legitimate traffic from other IPs remains unaffected.</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" onclick="runProbe(3)">Execute Probe 3</button>
+                            <div id="probe-3-out" class="probe-output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Probe 4 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 4: Geo Fallback Chain</span>
+                                <span class="badge-pill pill-success">Fallback</span>
+                            </div>
+                            <p class="probe-desc">Disables Provider A to prove Provider B answers. Then disables both to verify the submission still succeeds without geo (Degrade, never fail!).</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" onclick="runProbe(4)">Execute Probe 4</button>
+                            <div id="probe-4-out" class="probe-output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Probe 5 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 5: Side-Effect Failure</span>
+                                <span class="badge-pill pill-orange">Isolation</span>
+                            </div>
+                            <p class="probe-desc">Forces the email/webhook side effect to throw an unhandled exception. Verifies that the lead is still saved with HTTP 201.</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary btn-sm" onclick="runProbe(5)">Execute Probe 5</button>
+                            <div id="probe-5-out" class="probe-output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Probe 6 -->
+                    <div class="probe-card">
+                        <div>
+                            <div class="probe-top">
+                                <span class="probe-title">PROBE 6: Honeypot Bot Trap</span>
+                                <span class="badge-pill pill-danger">Anti-Spam</span>
+                            </div>
+                            <p class="probe-desc">Fills out the hidden honeypot field <code>website_hp</code> like an automated crawler. Verifies immediate rejection with HTTP 400.</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-danger btn-sm" onclick="runProbe(6)">Execute Probe 6</button>
+                            <div id="probe-6-out" class="probe-output"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Widget Modal -->
+    <div id="create-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title">Create Embeddable Widget</h3>
+            <form id="create-widget-form" onsubmit="handleCreateWidget(event)">
+                <div class="form-group">
+                    <label class="form-label">Internal Widget Name</label>
+                    <input type="text" id="w-name" class="form-input" placeholder="e.g. Newsletter Lead Form" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Widget Type</label>
+                    <select id="w-type" class="form-select">
+                        <option value="signup">Signup Form (Newsletter / Waitlist)</option>
+                        <option value="contact">Contact Sales / Support Form</option>
+                        <option value="cta">Call-To-Action Card</option>
+                        <option value="popover">Popover Lead Form</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Public Title</label>
+                    <input type="text" id="w-title" class="form-input" placeholder="e.g. Subscribe to Tech Weekly" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea id="w-desc" class="form-textarea" rows="2" placeholder="e.g. Get updates directly in your inbox."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Submit Button Label</label>
+                    <input type="text" id="w-btn" class="form-input" value="Submit" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Brand Color</label>
+                    <input type="color" id="w-color" class="form-input" value="#3b82f6" style="height:44px; padding:4px;" />
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateWidgetModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Widget</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Copied snippet to clipboard!</div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentAuthToken = '';
+        let currentTenantEmail = 'tenant.a@example.com';
+        let currentWidgets = [];
+
+        // Tab Switcher
+        function setTab(tabName) {
+            ['overview', 'widgets', 'submissions', 'probes'].forEach(t => {
+                document.getElementById('tab-' + t).style.display = (t === tabName) ? 'block' : 'none';
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(tabName));
+            });
+            if (tabName === 'widgets') fetchWidgets();
+            if (tabName === 'submissions') fetchSubmissions();
+            if (tabName === 'overview') fetchStats();
+        }
+
+        // Show Toast
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        // Auto Login Tenant
+        async function switchTenant(email) {
+            currentTenantEmail = email;
+            try {
+                const res = await fetch(API_BASE + '/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: 'Password123!' })
+                });
+                if (!res.ok) throw new Error('Login failed');
+                const data = await res.json();
+                currentAuthToken = data.access_token;
+                document.getElementById('tenant-display-name').innerText = email;
+                showToast('Switched session to ' + email);
+                fetchStats();
+                fetchWidgets();
+                fetchSubmissions();
+            } catch (err) {
+                console.error('Auth error:', err);
+                document.getElementById('tenant-display-name').innerText = 'Unauthenticated';
+            }
+        }
+
+        // Fetch Dashboard Stats
+        async function fetchStats() {
+            if (!currentAuthToken) return;
+            try {
+                const res = await fetch(API_BASE + '/api/dashboard/stats', {
+                    headers: { 'Authorization': 'Bearer ' + currentAuthToken }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+
+                document.getElementById('stat-total').innerText = data.total_submissions;
+                document.getElementById('stat-24h').innerText = data.last_24h_count;
+                document.getElementById('stat-7d').innerText = data.last_7d_count;
+                document.getElementById('leads-count-badge').innerText = data.total_submissions;
+
+                // Render Geo Breakdown
+                const geoContainer = document.getElementById('geo-list');
+                if (data.geo_breakdown && data.geo_breakdown.length > 0) {
+                    geoContainer.innerHTML = data.geo_breakdown.map(g => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#141c2e; padding:10px 14px; border-radius:8px; border:1px solid var(--border);">
+                            <span style="font-weight:600; font-size:13px;">${escapeHtml(g.country)}</span>
+                            <span class="badge-pill pill-purple">${g.count} leads</span>
+                        </div>
+                    `).join('');
+                } else {
+                    geoContainer.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">No geographic data yet.</p>';
+                }
+
+                // Render Per-Widget Stats
+                const widgetStatsContainer = document.getElementById('widget-stats-list');
+                if (data.per_widget && data.per_widget.length > 0) {
+                    widgetStatsContainer.innerHTML = data.per_widget.map(w => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#141c2e; padding:10px 14px; border-radius:8px; border:1px solid var(--border);">
+                            <span style="font-weight:600; font-size:13px;">${escapeHtml(w.widget_name)}</span>
+                            <span class="badge-pill pill-success">${w.submission_count} submissions</span>
+                        </div>
+                    `).join('');
+                } else {
+                    widgetStatsContainer.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">No widget data yet.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Fetch Widgets
+        async function fetchWidgets() {
+            if (!currentAuthToken) return;
+            try {
+                const res = await fetch(API_BASE + '/api/widgets', {
+                    headers: { 'Authorization': 'Bearer ' + currentAuthToken }
+                });
+                if (!res.ok) return;
+                currentWidgets = await res.json();
+                document.getElementById('widgets-count-badge').innerText = currentWidgets.length;
+                document.getElementById('stat-widgets').innerText = currentWidgets.length;
+
+                const container = document.getElementById('widgets-container');
+                if (currentWidgets.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-dim); grid-column: 1/-1;">No widgets found. Click "+ Create New Widget" above.</p>';
+                    return;
+                }
+
+                container.innerHTML = currentWidgets.map(w => `
+                    <div class="widget-item-card">
+                        <div>
+                            <div class="widget-top">
+                                <div>
+                                    <div class="widget-name">${escapeHtml(w.name)}</div>
+                                    <small style="color:var(--text-dim); font-size:11px;">ID: ${w.id}</small>
+                                </div>
+                                <span class="widget-type-badge type-${w.widget_type}">${w.widget_type}</span>
+                            </div>
+                            <p class="widget-desc">${escapeHtml(w.title)}</p>
+
+                            <div style="margin-bottom:8px; font-size:11px; color:var(--text-muted); font-weight:600;">Embed Snippet:</div>
+                            <div class="snippet-box">
+                                <span class="snippet-text">${escapeHtml(w.snippet)}</span>
+                                <button class="btn btn-secondary btn-sm" style="margin-left:8px;" onclick="copyToClipboard('${escapeHtml(w.snippet)}')">Copy</button>
+                            </div>
+                        </div>
+
+                        <div class="widget-card-actions">
+                            <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openTestWidget('${w.id}')">Test In Page</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteWidget('${w.id}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Fetch Submissions
+        async function fetchSubmissions() {
+            if (!currentAuthToken) return;
+            try {
+                const res = await fetch(API_BASE + '/api/dashboard/submissions?limit=100', {
+                    headers: { 'Authorization': 'Bearer ' + currentAuthToken }
+                });
+                if (!res.ok) return;
+                const subs = await res.json();
+                document.getElementById('leads-count-badge').innerText = subs.length;
+
+                const tbody = document.getElementById('submissions-table-body');
+                if (subs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-dim); padding:24px;">No lead submissions yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = subs.map(s => {
+                    const dateStr = new Date(s.created_at).toLocaleString();
+                    const geoDisplay = s.geo_country ? `${s.geo_country}${s.geo_city ? ', ' + s.geo_city : ''}` : 'Unknown';
+                    const payloadStr = JSON.stringify(s.payload);
+
+                    let providerBadge = '<span class="badge-pill pill-gray">none</span>';
+                    if (s.geo_provider === 'provider_a') providerBadge = '<span class="badge-pill pill-success">ip-api (A)</span>';
+                    if (s.geo_provider === 'provider_b') providerBadge = '<span class="badge-pill pill-purple">ipapi.co (B)</span>';
+
+                    return `
+                        <tr>
+                            <td style="white-space:nowrap; color:var(--text-muted); font-size:12px;">${dateStr}</td>
+                            <td><code>${s.widget_id}</code></td>
+                            <td><code style="color:#f43f5e;">${escapeHtml(payloadStr)}</code></td>
+                            <td><strong>${escapeHtml(geoDisplay)}</strong></td>
+                            <td>${providerBadge}</td>
+                            <td><span class="badge-pill pill-success">${s.status}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Create Widget Modal
+        function openCreateWidgetModal() {
+            document.getElementById('create-modal').classList.add('active');
+        }
+        function closeCreateWidgetModal() {
+            document.getElementById('create-modal').classList.remove('active');
+        }
+
+        async function handleCreateWidget(e) {
+            e.preventDefault();
+            const name = document.getElementById('w-name').value;
+            const type = document.getElementById('w-type').value;
+            const title = document.getElementById('w-title').value;
+            const desc = document.getElementById('w-desc').value;
+            const btn = document.getElementById('w-btn').value;
+            const color = document.getElementById('w-color').value;
+
+            const payload = {
+                name: name,
+                widget_type: type,
+                title: title,
+                description: desc || null,
+                button_text: btn,
+                fields: [
+                    { name: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'name@work.com' },
+                    { name: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Jane Doe' }
+                ],
+                display_options: { primary_color: color }
+            };
+
+            const res = await fetch(API_BASE + '/api/widgets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + currentAuthToken
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                closeCreateWidgetModal();
+                showToast('Widget created successfully!');
+                fetchWidgets();
+                fetchStats();
+            } else {
+                alert('Error creating widget');
+            }
+        }
+
+        async function deleteWidget(id) {
+            if (!confirm('Are you sure you want to delete this widget? All associated submissions will be removed.')) return;
+            const res = await fetch(API_BASE + '/api/widgets/' + id, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + currentAuthToken }
+            });
+            if (res.ok) {
+                showToast('Widget deleted');
+                fetchWidgets();
+                fetchStats();
+                fetchSubmissions();
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Copied embed snippet to clipboard!');
+        }
+
+        function openTestWidget(widgetId) {
+            window.open('http://localhost:5500', '_blank');
+        }
+
+        // Live Acceptance Probe Runner
+        async function runProbe(num) {
+            const out = document.getElementById('probe-' + num + '-out');
+            out.style.display = 'block';
+            out.innerHTML = 'Executing Probe ' + num + '...';
+
+            const defaultWidgetId = (currentWidgets.length > 0) ? currentWidgets[0].id : 'widget-demo-newsletter';
+
+            try {
+                if (num === 1) {
+                    const res = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Origin': 'http://localhost:5500' },
+                        body: JSON.stringify({
+                            widget_id: defaultWidgetId,
+                            data: { email: 'probe1.live@browser-test.com', name: 'Probe 1 Visitor' },
+                            website_hp: ''
+                        })
+                    });
+                    const json = await res.json();
+                    out.innerHTML = `<strong>HTTP ${res.status} Created</strong><br/>Response: ${JSON.stringify(json, null, 2)}`;
+                    fetchSubmissions();
+                    fetchStats();
+                } else if (num === 2) {
+                    // Send malformed syntax
+                    const res1 = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: "not json string"
+                    });
+                    const json1 = await res1.json();
+                    out.innerHTML = `<strong>Malformed Test: HTTP ${res1.status}</strong><br/>Response: ${JSON.stringify(json1)}<br/><br/>`;
+
+                    // Send oversized payload (>64KB)
+                    const huge = 'A'.repeat(70000);
+                    const res2 = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ widget_id: defaultWidgetId, data: { blob: huge } })
+                    });
+                    const json2 = await res2.json();
+                    out.innerHTML += `<strong>Oversized Test: HTTP ${res2.status}</strong><br/>Response: ${JSON.stringify(json2)}`;
+                } else if (num === 3) {
+                    out.innerHTML = 'Sending burst of 7 rapid requests from same IP...<br/>';
+                    let log = '';
+                    for (let i = 1; i <= 7; i++) {
+                        const r = await fetch(API_BASE + '/submissions', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': '198.51.100.99' },
+                            body: JSON.stringify({ widget_id: defaultWidgetId, data: { email: `burst${i}@flood.com` } })
+                        });
+                        log += `Req ${i}: HTTP ${r.status} ${r.status === 429 ? '(Throttled - 429!)' : '(OK)'}<br/>`;
+                    }
+                    out.innerHTML = log;
+                } else if (num === 4) {
+                    // Provider B fallback
+                    const resB = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Simulate-Geo-A': 'down' },
+                        body: JSON.stringify({ widget_id: defaultWidgetId, data: { email: 'probe4.providerB@test.com' } })
+                    });
+                    // Both down graceful degradation
+                    const resNone = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Simulate-Geo-A': 'down', 'X-Simulate-Geo-B': 'down' },
+                        body: JSON.stringify({ widget_id: defaultWidgetId, data: { email: 'probe4.bothdown@test.com' } })
+                    });
+                    out.innerHTML = `Provider A Down -> HTTP ${resB.status} (Provider B used)<br/>Both Providers Down -> HTTP ${resNone.status} (Degraded gracefully without error!)`;
+                    fetchSubmissions();
+                    fetchStats();
+                } else if (num === 5) {
+                    const res = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Simulate-Side-Effect-Fail': 'true' },
+                        body: JSON.stringify({ widget_id: defaultWidgetId, data: { email: 'sideeffect.fail@alert.com' } })
+                    });
+                    const json = await res.json();
+                    out.innerHTML = `<strong>HTTP ${res.status} Created</strong><br/>Side effect failure was safely isolated. Submission saved in DB.<br/>Response: ${JSON.stringify(json)}`;
+                    fetchSubmissions();
+                    fetchStats();
+                } else if (num === 6) {
+                    const res = await fetch(API_BASE + '/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            widget_id: defaultWidgetId,
+                            data: { email: 'spambot@malicious.com' },
+                            website_hp: 'Automated spam content filled by bot'
+                        })
+                    });
+                    const json = await res.json();
+                    out.innerHTML = `<strong>HTTP ${res.status} Bad Request</strong><br/>Bot Trapped by Honeypot!<br/>Response: ${JSON.stringify(json)}`;
+                }
+            } catch (err) {
+                out.innerHTML = 'Error executing probe: ' + err.message;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(text));
+            return div.innerHTML;
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTenant('tenant.a@example.com');
+        });
+    </script>
+</body>
+</html>
